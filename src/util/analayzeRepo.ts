@@ -6,9 +6,11 @@ import { analyzePackageFile } from "./analyzePackageFile";
 export async function analyzeRepo({
     repositoryPath,
     outputPath,
+    token,
 }: {
     repositoryPath: string;
     outputPath: string | null;
+    token: string;
 }) {
     const [owner, repo] = repositoryPath.split("/");
 
@@ -20,7 +22,7 @@ export async function analyzeRepo({
         `Loading lock files from ${chalk.blue(`${owner}/${repo}`)}`,
     ).start();
 
-    const files = await findLockFilesFromRepo({ repo, owner: owner });
+    const files = await findLockFilesFromRepo({ token, repo, owner: owner });
 
     if (files.length === 0) {
         loading.fail(

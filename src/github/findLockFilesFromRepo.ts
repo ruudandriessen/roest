@@ -23,16 +23,14 @@ interface GithubContentResponse {
 export async function findLockFilesFromRepo({
     repo,
     owner,
+    token,
 }: {
     repo: string;
     owner: string;
+    token: string;
 }): Promise<LockFile[]> {
-    if (!process.env.GITHUB_TOKEN) {
-        throw new Error("GITHUB_TOKEN environment variable not set");
-    }
-
     const octokit = new Octokit({
-        auth: process.env.GITHUB_TOKEN,
+        auth: token,
     });
 
     const results = await Promise.all(

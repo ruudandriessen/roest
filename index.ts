@@ -45,8 +45,13 @@ program
     .argument("<repo>", "Github repo to analyze in format <owner>/<repository>")
     .option("-o, --output <path>", "Output file path", "./output.json")
     .action(async (repositoryPath, options) => {
+        const token = process.env.GITHUB_TOKEN;
+        if (!token) {
+            throw new Error("GITHUB_TOKEN environment variable not set");
+        }
+
         const outputPath = options.output ? resolve(options.output) : null;
-        await analyzeRepo({ repositoryPath, outputPath });
+        await analyzeRepo({ repositoryPath, outputPath, token });
     });
 
 program
