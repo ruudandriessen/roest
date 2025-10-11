@@ -1,6 +1,6 @@
 {
     "name": "roest",
-    "module": "index.ts",
+    "module": "lib.ts",
     "type": "module",
     "version": "0.0.1",
     "bin": {
@@ -8,12 +8,23 @@
     },
     "files": [
         "dist/roest",
+        "dist/lib.js",
+        "dist/lib.d.ts",
+        "dist/src",
         "README.md",
         "LICENSE.md"
     ],
+    "exports": {
+        ".": {
+            "types": "./dist/lib.d.ts",
+            "default": "./dist/lib.js"
+        }
+    },
     "scripts": {
-        "build": "bun run build:web && bun run build:cli",
+        "build": "bun run build:web && bun run build:cli && bun run build:lib",
         "build:cli": "bun build index.ts --target=node --outfile=dist/roest",
+        "build:lib": "bun build lib.ts --target=node --outfile=dist/lib.js --format=esm && bun run build:types",
+        "build:types": "tsc lib.ts --declaration --emitDeclarationOnly --outDir dist --skipLibCheck",
         "build:web": "vite build",
         "dev:web": "vite dev",
         "biome:check": "biome check --write ./",

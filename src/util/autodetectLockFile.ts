@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import * as fs from "node:fs";
 
 export const KNOWN_LOCK_FILES = ["package-lock.json", "bun.lock", "yarn.lock"];
 

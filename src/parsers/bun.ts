@@ -1,4 +1,4 @@
-import JSON5 from "json5";
+import * as JSON5 from "json5";
 import type { Package } from "../models/Package";
 
 interface BunLockFile {

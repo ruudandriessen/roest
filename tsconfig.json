@@ -1,17 +1,17 @@
 {
     "compilerOptions": {
-        // Environment setup for Node.js/Bun runtime
         "lib": ["ESNext"],
         "target": "ESNext",
         "module": "ESNext",
         "moduleDetection": "force",
         "allowJs": true,
-        // Node.js module resolution
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "noEmit": true,
+        "declaration": true,
+        "declarationMap": true,
+        "emitDeclarationOnly": true,
         // Best practices
         "strict": true,
         "skipLibCheck": true,
