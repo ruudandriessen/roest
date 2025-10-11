@@ -6,6 +6,11 @@
     "bin": {
         "roest": "./dist/roest"
     },
+    "files": [
+        "dist/roest",
+        "README.md",
+        "LICENSE.md"
+    ],
     "scripts": {
         "build": "bun run build:web && bun run build:cli",
         "build:cli": "bun build index.ts --target=node --outfile=dist/roest",
