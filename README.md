@@ -26,6 +26,22 @@ npx roest repo owner/repository
 
 This will find and analyze all lock files in the specified GitHub repository.
 
+### Generate HTML Report
+
+After running an analysis, you can generate a visual HTML report:
+
+```bash
+npx roest show
+```
+
+This will read the `output.json` file and generate a `report.html` file with a visual representation of your package freshness data.
+
+You can also specify custom input and output paths:
+
+```bash
+npx roest show ./custom-output.json -o ./custom-report.html
+```
+
 ### Command Options
 
 #### `check` command
@@ -34,6 +50,10 @@ This will find and analyze all lock files in the specified GitHub repository.
 
 #### `repo` command
 - `-o, --output <path>`: Output file path for JSON results (default: `./output.json`)
+
+#### `show` command
+- `[input]`: Input JSON file path (default: `./output.json`)
+- `-o, --output <path>`: Output HTML file path (default: `./report.html`)
 
 ## Output Format
 
