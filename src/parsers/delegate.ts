@@ -1,8 +1,8 @@
+import { basename } from "node:path";
 import type { Package } from "../models/Package";
 import { parseBunLock } from "./bun";
 import { parsePackageLock } from "./npm";
 import { parseYarnLock } from "./yarn";
-import { basename } from "node:path";
 
 export function parseDelegate(
     lockPath: string,
