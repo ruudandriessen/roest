@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Command } from "commander";
+import { generateHtmlReport } from "./src/ui/generateHtml";
 import { analyzeRepo } from "./src/util/analayzeRepo";
 import { analyzePackageFile } from "./src/util/analyzePackageFile";
 import { autodetectLockFile } from "./src/util/autodetectLockFile";
@@ -46,6 +47,21 @@ program
     .action(async (repositoryPath, options) => {
         const outputPath = options.output ? resolve(options.output) : null;
         await analyzeRepo({ repositoryPath, outputPath });
+    });
+
+program
+    .command("show")
+    .description("Generate HTML report from analysis output")
+    .argument("[input]", "Input JSON file path", "./output.json")
+    .option("-o, --output <path>", "Output HTML file path", "./report.html")
+    .action(async (inputPath, options) => {
+        const resolvedInputPath = resolve(inputPath);
+        const resolvedOutputPath = resolve(options.output);
+
+        await generateHtmlReport({
+            inputPath: resolvedInputPath,
+            outputPath: resolvedOutputPath,
+        });
     });
 
 program.parse();

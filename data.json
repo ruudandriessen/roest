@@ -1,0 +1,92 @@
+[
+  {
+    "name": "@types/bun",
+    "current": {
+      "version": "1.2.21",
+      "publishDate": "2025-08-26T05:02:58.001Z"
+    },
+    "next": {
+      "version": "1.2.22",
+      "publishDate": "2025-09-14T16:35:05.095Z"
+    }
+  },
+  {
+    "name": "ora",
+    "current": {
+      "version": "8.2.0",
+      "publishDate": "2025-02-02T07:26:16.712Z"
+    },
+    "next": {
+      "version": "9.0.0",
+      "publishDate": "2025-09-16T03:30:20.976Z"
+    }
+  },
+  {
+    "name": "typescript",
+    "current": {
+      "version": "5.9.2",
+      "publishDate": "2025-07-31T17:54:06.216Z"
+    },
+    "next": {
+      "version": "5.9.3",
+      "publishDate": "2025-09-30T21:19:38.784Z"
+    }
+  },
+  {
+    "name": "@biomejs/biome",
+    "current": {
+      "version": "2.2.4",
+      "publishDate": "2025-09-10T10:24:46.473Z"
+    },
+    "next": {
+      "version": "2.2.5",
+      "publishDate": "2025-10-02T10:13:47.151Z"
+    }
+  },
+  {
+    "name": "semver",
+    "current": {
+      "version": "7.7.2",
+      "publishDate": "2025-05-12T17:02:28.372Z"
+    },
+    "next": {
+      "version": "7.7.3",
+      "publishDate": "2025-10-07T18:00:51.643Z"
+    }
+  },
+  {
+    "name": "@types/semver",
+    "current": {
+      "version": "7.7.1",
+      "publishDate": "2025-09-03T15:02:35.366Z"
+    }
+  },
+  {
+    "name": "chalk",
+    "current": {
+      "version": "5.6.2",
+      "publishDate": "2025-09-08T14:47:54.486Z"
+    }
+  },
+  {
+    "name": "commander",
+    "current": {
+      "version": "14.0.1",
+      "publishDate": "2025-09-12T07:27:06.725Z"
+    }
+  },
+  {
+    "name": "json5",
+    "current": {
+      "version": "2.2.3",
+      "publishDate": "2022-12-31T17:11:32.047Z"
+    }
+  },
+  {
+    "name": "octokit",
+    "current": {
+      "version": "5.0.3",
+      "publishDate": "2025-05-27T19:33:52.205Z"
+    }
+  }
+]
