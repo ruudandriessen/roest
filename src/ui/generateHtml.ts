@@ -1,5 +1,9 @@
+import { exec } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { promisify } from "node:util";
+
+const execAsync = promisify(exec);
 
 interface PackageData {
     name: string;
@@ -56,8 +60,29 @@ export async function generateHtmlReport({
 
         console.log(`✅ HTML report generated: ${outputPath}`);
         console.log(`✅ Package data embedded in HTML`);
+
+        // Open the HTML file in the default browser
+        await openInBrowser(outputPath);
     } catch (error) {
         console.error("❌ Failed to generate HTML report:", error);
         throw error;
+    }
+}
+
+async function openInBrowser(filePath: string) {
+    try {
+        const command =
+            process.platform === "darwin"
+                ? `open "${filePath}"`
+                : process.platform === "win32"
+                  ? `start "${filePath}"`
+                  : `xdg-open "${filePath}"`;
+
+        await execAsync(command);
+        console.log(`🌐 Opening report in browser...`);
+    } catch {
+        console.warn(
+            "⚠️  Could not automatically open browser. Please open the file manually.",
+        );
     }
 }
