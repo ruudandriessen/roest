@@ -62,7 +62,7 @@ The tool also generates a detailed JSON file containing:
 - **npm package-lock.json v2**: Full support
 - **npm package-lock.json v3**: Full support
 - **pnpm**: Planned
-- **bun**: Planned
+- **bun**: Full support
 - **yarn**: Planned
 
 ## Development
