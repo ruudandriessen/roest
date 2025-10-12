@@ -15,6 +15,10 @@ interface NpmRegistryResponse {
     time: Record<string, string>;
 }
 
+const isPrereleaseRegex = /^\d+\.\d+\.\d+-/;
+
+const isPrerelease = (version: string) => isPrereleaseRegex.test(version);
+
 export async function fetchPackageInfo(
     packageName: string,
     currentVersion: string,
@@ -26,7 +30,7 @@ export async function fetchPackageInfo(
 
     const data = (await response.json()) as NpmRegistryResponse;
     const versions = Object.keys(data.versions)
-        .filter((version) => !version.includes("-"))
+        .filter((version) => !isPrerelease(version))
         .sort((a, b) => {
             const packageATime = data.time[a];
             const packageBTime = data.time[b];
@@ -41,15 +45,36 @@ export async function fetchPackageInfo(
             );
         });
 
-    const currentVersionIndex = versions.indexOf(currentVersion);
-    const currentVersionPublishDate = data.time[currentVersion];
-    if (currentVersionPublishDate == null) {
-        throw new Error("Current version not found in time data");
+    let currentVersionIndex = versions.indexOf(currentVersion);
+    let currentVersionPublishDate = data.time[currentVersion];
+
+    if (isPrerelease(currentVersion)) {
+        const baseVersion = currentVersion.split("-")[0];
+        if (!baseVersion) {
+            throw new Error(`Invalid version format: ${currentVersion}`);
+        }
+
+        currentVersionIndex = versions.indexOf(baseVersion);
+
+        if (currentVersionIndex === -1) {
+            // If base version not found, use the latest available version
+            currentVersionIndex = versions.length - 1;
+        }
+
+        const resolvedVersion = versions[currentVersionIndex];
+        if (!resolvedVersion) {
+            throw new Error(
+                `No stable versions found for package ${packageName}`,
+            );
+        }
+
+        currentVersionPublishDate = data.time[resolvedVersion];
     }
 
-    if (currentVersionIndex === -1) {
-        console.log(versions, currentVersion);
-        throw new Error("Current version not found in package versions");
+    if (currentVersionPublishDate == null) {
+        throw new Error(
+            `No time data found for resolved version ${currentVersion}`,
+        );
     }
 
     const nextVersion = versions[currentVersionIndex + 1];
