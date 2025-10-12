@@ -22,7 +22,7 @@ program
     .option("-o, --output <path>", "Output file path", "./output.json")
     .action(async (options) => {
         const lockFilePath = options.file ? resolve(options.file) : null;
-        const outputPath = options.output ? resolve(options.output) : null;
+        const outputPath = options.output ? resolve(options.output) : undefined;
 
         const filePath = lockFilePath ?? autodetectLockFile(process.cwd());
         if (!filePath) {
@@ -50,7 +50,7 @@ program
             throw new Error("GITHUB_TOKEN environment variable not set");
         }
 
-        const outputPath = options.output ? resolve(options.output) : null;
+        const outputPath = options.output ? resolve(options.output) : undefined;
         await analyzeRepo({ repositoryPath, outputPath, token });
     });
 
