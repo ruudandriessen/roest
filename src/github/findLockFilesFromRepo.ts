@@ -6,78 +6,111 @@ interface LockFile {
     content: string;
 }
 
-interface GithubSearchResponse {
-    data: {
-        items: {
-            path: string;
-        }[];
-    };
-}
+async function getCommitSha({
+    octokit,
+    owner,
+    repo,
+    ref,
+}: {
+    octokit: Octokit;
+    owner: string;
+    repo: string;
+    ref?: string;
+}): Promise<string> {
+    if (ref) {
+        const { data: refData } = await octokit.rest.git.getRef({
+            owner,
+            repo,
+            ref: `heads/${ref}`,
+        });
+        return refData.object.sha;
+    }
 
-interface GithubContentResponse {
-    data: {
-        content: string;
-    };
+    const { data: repoInfo } = await octokit.rest.repos.get({
+        owner,
+        repo,
+    });
+
+    const { data: refData } = await octokit.rest.git.getRef({
+        owner,
+        repo,
+        ref: `heads/${repoInfo.default_branch}`,
+    });
+    return refData.object.sha;
 }
 
 export async function findLockFilesFromRepo({
     repo,
     owner,
     token,
+    ref,
 }: {
     repo: string;
     owner: string;
     token: string;
+    ref?: string;
 }): Promise<LockFile[]> {
     const octokit = new Octokit({
         auth: token,
     });
 
-    const results = await Promise.all(
-        KNOWN_LOCK_FILES.map(async (lockFile): Promise<LockFile[]> => {
-            try {
-                const codeResults = (await octokit.rest.search.code({
-                    q: `repo:${owner}/${repo} in:path ${lockFile}`,
-                })) as GithubSearchResponse;
+    try {
+        const commitSha = await getCommitSha({ octokit, owner, repo, ref });
 
-                const responses = await Promise.all(
-                    codeResults.data.items.map(async (item) => {
-                        const response = (await octokit.rest.repos.getContent({
-                            owner,
-                            repo,
-                            path: item.path,
-                        })) as GithubContentResponse;
+        const { data: tree } = await octokit.rest.git.getTree({
+            owner,
+            repo,
+            tree_sha: commitSha,
+            recursive: "true",
+        });
 
-                        return {
-                            data: response.data,
-                            path: item.path,
-                        };
-                    }),
-                );
+        const lockFilePaths = tree.tree.filter((item) => {
+            if (item.type !== "blob") return false;
 
-                return responses
-                    .map(({ path, data }): LockFile | null => {
-                        if (!("content" in data)) {
-                            return null;
-                        }
-                        const content = Buffer.from(
-                            data.content,
-                            "base64",
-                        ).toString("utf-8");
-                        return {
-                            path,
-                            content,
-                        };
-                    })
-                    .filter((item) => item != null);
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    console.warn(`Failed to fetch ${lockFile}:`, error.message);
+            const fileName = item.path?.split("/").pop() || "";
+            return KNOWN_LOCK_FILES.includes(fileName);
+        });
+
+        const lockFiles = await Promise.all(
+            lockFilePaths.map(async (item): Promise<LockFile | null> => {
+                try {
+                    if (!item.path || !item.sha) return null;
+
+                    const { data: blob } = await octokit.rest.git.getBlob({
+                        owner,
+                        repo,
+                        file_sha: item.sha,
+                    });
+
+                    const content = Buffer.from(
+                        blob.content,
+                        blob.encoding as BufferEncoding,
+                    ).toString("utf-8");
+
+                    return {
+                        path: item.path,
+                        content,
+                    };
+                } catch (error: unknown) {
+                    if (error instanceof Error) {
+                        console.warn(
+                            `Failed to fetch ${item.path}:`,
+                            error.message,
+                        );
+                    }
+                    return null;
                 }
-                return [];
-            }
-        }),
-    );
+            }),
+        );
 
-    return results.flat().filter((item) => item != null);
+        return lockFiles.filter((item): item is LockFile => item !== null);
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(
+                `Failed to fetch lock files from tree:`,
+                error.message,
+            );
+        }
+        return [];
+    }
 }
