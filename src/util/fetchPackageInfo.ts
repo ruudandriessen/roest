@@ -1,4 +1,4 @@
-interface PackageInfo {
+export interface PackageInfo {
     name: string;
     current: {
         version: string;
