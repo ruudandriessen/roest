@@ -9,7 +9,7 @@ export async function analyzeRepo({
     token,
 }: {
     repositoryPath: string;
-    outputPath: string | null;
+    outputPath?: string;
     token: string;
 }) {
     const [owner, repo] = repositoryPath.split("/");

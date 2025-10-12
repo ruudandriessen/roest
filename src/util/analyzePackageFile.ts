@@ -11,7 +11,7 @@ export async function analyzePackageFile({
 }: {
     lockFilePath: string;
     lockFileContent: string;
-    outputPath: string | null;
+    outputPath?: string;
 }): Promise<PackageInfo[]> {
     try {
         const packagesToAnalyze = parseDelegate(lockFilePath, lockFileContent);
