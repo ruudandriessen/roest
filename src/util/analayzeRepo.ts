@@ -34,9 +34,9 @@ export async function analyzeRepo({
     loading.succeed(`Found ${files.length} lock file(s)\n`);
 
     return Promise.all(
-        files.map((file) => ({
+        files.map(async (file) => ({
             path: file.path,
-            info: analyzePackageFile({
+            info: await analyzePackageFile({
                 outputPath,
                 lockFileContent: file.content,
                 lockFilePath: file.path,
