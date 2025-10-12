@@ -2,7 +2,7 @@ import { writeFileSync } from "node:fs";
 import chalk from "chalk";
 import ora from "ora";
 import { parseDelegate } from "../parsers/delegate";
-import { fetchPackageInfo } from "./fetchPackageInfo";
+import { fetchPackageInfo, type PackageInfo } from "./fetchPackageInfo";
 
 export async function analyzePackageFile({
     lockFilePath,
@@ -12,7 +12,7 @@ export async function analyzePackageFile({
     lockFilePath: string;
     lockFileContent: string;
     outputPath: string | null;
-}) {
+}): Promise<PackageInfo[]> {
     try {
         const packagesToAnalyze = parseDelegate(lockFilePath, lockFileContent);
 
@@ -76,7 +76,10 @@ export async function analyzePackageFile({
         if (outputPath) {
             writeFileSync(outputPath, JSON.stringify(packageInfos, null, 2));
         }
+
+        return packageInfos;
     } catch (error) {
         console.error("Error analyzing packages:", error);
+        return [];
     }
 }

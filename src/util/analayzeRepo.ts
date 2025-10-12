@@ -33,11 +33,14 @@ export async function analyzeRepo({
 
     loading.succeed(`Found ${files.length} lock file(s)\n`);
 
-    files.forEach((file) => {
-        analyzePackageFile({
-            outputPath,
-            lockFileContent: file.content,
-            lockFilePath: file.path,
-        });
-    });
+    return Promise.all(
+        files.map((file) => ({
+            path: file.path,
+            info: analyzePackageFile({
+                outputPath,
+                lockFileContent: file.content,
+                lockFilePath: file.path,
+            }),
+        })),
+    );
 }
